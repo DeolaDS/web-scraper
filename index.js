@@ -4,17 +4,25 @@ Includes modules existing in separate files */
 const axios = require('axios')
 const cheerio = require('cheerio')
 const express = require('express')
-
+const cors = require('cors')
 const PORT = 8000 /**Want our server to run on this port */
-
 const app = express()
-
+app.use(cors)
 const url ="https://www.tripadvisor.com/Attractions-g187275-Activities-Germany.html"
-axios(url)
-/**chaining */
+
+//getting data from backend/server in browser
+app.get('/', function(request, response){
+    response.json("This is my first webscraper")
+
+})
+
+app.get('/results', (req, res)=> {
+    axios(url)
+    /**chaining */
     .then(response => {
         const html = response.data
         const $ = cheerio.load(html)
+       // console.log(pretty($.html()));
         const articles =[]
         
         //find this class in html, and for each
@@ -29,8 +37,11 @@ axios(url)
                 //link
             })
         })
-        console.log(articles)
+        //console.log(articles)
+        res.json(articles)
     }).catch(err => console.log(err))
+})
+
 
 /* List to PORT and see if any changes are made 
 () Callback */
